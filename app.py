@@ -1,6 +1,6 @@
-import os
 from flask import Flask, request, jsonify, render_template
 import openai
+import os
 from dotenv import load_dotenv
 
 # Load environment variables
@@ -24,6 +24,7 @@ def summarize():
         return jsonify({"error": "No text provided"}), 400
 
     try:
+        # Updated API call for openai >= 1.0.0
         response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
             messages=[
@@ -39,6 +40,5 @@ def summarize():
         return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
-    # Bind to 0.0.0.0 and use the PORT environment variable
     port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port)
