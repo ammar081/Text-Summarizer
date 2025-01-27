@@ -1,10 +1,14 @@
+import os
 from flask import Flask, request, jsonify, render_template
 import openai
-import os
 from dotenv import load_dotenv
 
-# Set your OpenAI API key
-openai.api_key = os.getenv("OPENAI_API_KEY");
+# Load environment variables
+load_dotenv()
+
+# OpenAI API Key
+openai.api_key = os.getenv("OPENAI_API_KEY")
+
 app = Flask(__name__)
 
 @app.route('/')
@@ -20,9 +24,8 @@ def summarize():
         return jsonify({"error": "No text provided"}), 400
 
     try:
-        # Use GPT-3.5-turbo or GPT-4 for summarization
         response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",  # Use "gpt-4" if available
+            model="gpt-3.5-turbo",
             messages=[
                 {"role": "system", "content": "You are an assistant that summarizes text."},
                 {"role": "user", "content": f"Summarize the following text:\n\n{text}"}
@@ -36,4 +39,6 @@ def summarize():
         return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    # Bind to 0.0.0.0 and use the PORT environment variable
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port)
